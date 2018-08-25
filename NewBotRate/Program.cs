@@ -15,6 +15,7 @@ namespace NewBotRate
     {
         public string Token { get; set; }
         public string CmdPrefix { get; set; }
+        public string LyricAPIKey { get; set; }
     }
 
 
@@ -24,7 +25,7 @@ namespace NewBotRate
         private IServiceProvider services;
         private CommandService commands;
         public static readonly HttpClient httpClient = new HttpClient();
-
+        public static string LyricsAPIKey = null;
 
         private string prefix = "$";
 
@@ -46,6 +47,7 @@ namespace NewBotRate
                         BotOptions bo = new BotOptions();
                         bo.Token = "YOURTOKEN";
                         bo.CmdPrefix = "YOURPREFIX";
+                        bo.LyricAPIKey = "";
                         serializer.Serialize(fs, bo);
                         fs.Close();
                     }
@@ -68,6 +70,7 @@ namespace NewBotRate
                 botOptions = (BotOptions)serializer.Deserialize(fs, typeof(BotOptions));
             }
             this.prefix = botOptions.CmdPrefix;
+            Program.LyricsAPIKey = botOptions.LyricAPIKey;
 
             // Do all the bot set up in here.
             client = new DiscordSocketClient(new DiscordSocketConfig

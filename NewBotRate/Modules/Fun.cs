@@ -88,8 +88,12 @@ namespace NewBotRate.Modules
             RootSongObject RSO = null;
             try
             {
-                //await ReplyAsync($"URL = https://orion.apiseeds.com/api/music/lyric/{Uri.EscapeDataString(artistName)}/{Uri.EscapeDataString(artistSong)}?apikey=iT98knnLsmjvcQEqfSOiPPFoKhLyWeEORMgjWtb01NT387tjTiBVK3owI2z3ZHDw");
-                string response = await NewBotRate.Program.httpClient.GetStringAsync($"https://orion.apiseeds.com/api/music/lyric/{Uri.EscapeDataString(artistName)}/{Uri.EscapeDataString(artistSong)}?apikey=iT98knnLsmjvcQEqfSOiPPFoKhLyWeEORMgjWtb01NT387tjTiBVK3owI2z3ZHDw");
+                if(Program.LyricsAPIKey == null || Program.LyricsAPIKey == "")
+                {
+                    await ReplyAsync("There is no lyrics api key configured. Look @ config.json...");
+                    return;
+                }
+                string response = await NewBotRate.Program.httpClient.GetStringAsync($"https://orion.apiseeds.com/api/music/lyric/{Uri.EscapeDataString(artistName)}/{Uri.EscapeDataString(artistSong)}?apikey={Program.LyricsAPIKey}");
                 RSO = JsonConvert.DeserializeObject<RootSongObject>(response);
 
                 if(RSO.error.Contains("Lyric no found"))
