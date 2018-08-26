@@ -5,6 +5,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Drawing;
+using ImageProcessor;
+using ImageProcessor.Imaging.Formats;
+using System.IO;
+
 namespace NewBotRate.Utils
 {
     public class HelperFuncs
@@ -18,7 +23,6 @@ namespace NewBotRate.Utils
                 yield return str.Substring((i < 0) ? 0 : i, Math.Min(maxChunkSize, str.Length - i));
             }
         }
-
         public static async Task<byte[]> DownloadFileBytesAsync(string url)
         {
             try
@@ -44,6 +48,12 @@ namespace NewBotRate.Utils
             {
                 return null;
             }
+        }
+
+
+        public static ImageFactory GetImageFactory(MemoryStream imgStream)
+        {
+            return new ImageFactory(preserveExifData: true).Load(imgStream);
         }
     }
 }
