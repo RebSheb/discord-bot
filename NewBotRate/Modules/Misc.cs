@@ -113,9 +113,18 @@ namespace NewBotRate.Modules
                 return;
             }
 
-            Data.Data.DeleteFeedback(FBackID);
-            await ReplyAsync($"Successfully deleted value {FBackID} if it existed!\n");
-            return;
+            bool Res = await Data.Data.DeleteFeedback(FBackID);
+            if (Res)
+            {
+                await ReplyAsync($"Successfully deleted value {FBackID}!");
+                return;
+            }
+            else
+            {
+                await ReplyAsync($"The entry for {FBackID} doesn't exist...");
+                return;
+            }
+
         }
 
         [Command("setreadfeedback"), Alias("sfb"), Summary("Set a feedback as read"), RequireOwner]
