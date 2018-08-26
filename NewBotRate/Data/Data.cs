@@ -42,16 +42,18 @@ namespace NewBotRate.Data
             }
         }
 
-        public static async void DeleteFeedback(int FBackID)
+        public static async Task<bool> DeleteFeedback(int FBackID)
         {
             using (var DbContext = new SqliteDbContext())
             {
-                if (DbContext.Feedbacks.Where(x => x.FeedbackID == FBackID).Count() == 1)
+                if (DbContext.Feedbacks.Where(x => x.FeedbackID == FBackID).Count() >= 1)
                 {
                     //await DbContext.Feedbacks.Where(x => x.FeedbackID == FBackID)
                     DbContext.Entry(new Feedback() { FeedbackID = FBackID }).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
                     await DbContext.SaveChangesAsync();
+                    return true;
                 }
+                return false;
             }
 
         }
@@ -119,7 +121,17 @@ namespace NewBotRate.Data
 
         public static async Task<string> DeleteTag(ulong GID, ulong UID, string TagName)
         {
-
+            using (var DbContext = new SqliteDbContext())
+            {
+                if(DbContext.Tags.Where(x => x.GuildID == GID && x.UserID == UID && x.TagName == TagName).Count() >= 1)
+                {
+                    List<Tag> retTag = DbContext.Tags.Where(x => x.GuildID == GID && x.UserID == UID && x.TagName == TagName).Take(1).ToList();
+                    DbContext.Entry(retTag.ElementAt(0)).State = Microsoft.EntityFrameworkCore.EntityState.Deleted;
+                    await DbContext.SaveChangesAsync();
+                    return $"Successfully deleted {TagName}";
+                }
+                return $"Tag {TagName} doesn't exist!";
+            }
         }
         #endregion
 
