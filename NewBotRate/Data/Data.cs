@@ -10,6 +10,8 @@ namespace NewBotRate.Data
 {
     public static class Data
     {
+        /* Feedback Functions */
+        #region FeedbackFuncs
         public static List<Feedback> GetFeedbacks(int Amount = 10, bool GetRead = false)
         {
             List<Feedback> RetList = null;
@@ -67,10 +69,11 @@ namespace NewBotRate.Data
                 await DbContext.SaveChangesAsync();
             }
         }
+        #endregion
 
-
-
-        public static string AddTag(ulong GID, ulong UID, string tagName, string msg)
+        /* Tag Functions */
+        #region TagFuncs
+        public static async Task<string> AddTag(ulong GID, ulong UID, string tagName, string msg)
         {
             using (var DbContext = new SqliteDbContext()) 
             {
@@ -79,7 +82,7 @@ namespace NewBotRate.Data
                     return "This tag has already been taken!";
                 }
 
-                DbContext.Tags.Add(new Tag
+                await DbContext.Tags.AddAsync(new Tag
                 {
                     GuildID = GID,
                     UserID = UID,
@@ -87,13 +90,12 @@ namespace NewBotRate.Data
                     TagMsg = msg,
                 });
 
-                DbContext.SaveChanges();
+                await DbContext.SaveChangesAsync();
             }
             return $"Successfully added tag {tagName}";
         }         
         
-
-        public static List<Tag> GetTags(ulong GID, ulong UID, int paginate = 0)
+        public static async Task<List<Tag>> GetTags(ulong GID, ulong UID, int paginate = 0)
         {
             List<Tag> retTags = null;
             using (var DbContext = new SqliteDbContext())
@@ -107,12 +109,20 @@ namespace NewBotRate.Data
             return retTags;
         }
 
-        public static int GetTagCountUser(ulong GID, ulong UID)
+        public static async Task<int> GetTagCountUser(ulong GID, ulong UID)
         {
             using (var DbContext = new SqliteDbContext())
             {
                 return DbContext.Tags.Where(x => x.GuildID == GID && x.UserID == UID).Count();
             }
         }
+
+        public static async Task<string> DeleteTag(ulong GID, ulong UID, string TagName)
+        {
+
+        }
+        #endregion
+
+
     }
 }
