@@ -14,6 +14,80 @@ namespace NewBotRate.Modules
 {
     public class Misc : ModuleBase<SocketCommandContext>
     {
+        [Command("help"), Summary("Helps... What do you think?")]
+        public async Task Help([Summary("The command to search for")] string cmd = null)
+        {
+            if (cmd == null)
+            {
+                EmbedBuilder embed = new EmbedBuilder();
+
+                embed.WithColor(163, 214, 227);
+                embed.WithTitle("List of commands:");
+
+                string commands = "";
+
+                foreach (CommandInfo commandService in Program.commands.Commands)
+                {
+                    if (!(await commandService.CheckPreconditionsAsync(Context)).IsSuccess)
+                    {
+                        continue;
+                    }
+
+
+                    commands += $"{commandService.Name}\n";
+                }
+
+                embed.WithDescription(commands);
+
+                await ReplyAsync(string.Empty, false, embed: embed.Build());
+            }
+
+            else if(Program.commands.Commands.ToList().Find(e => e.Name == cmd) != null)
+            {
+                EmbedBuilder embed = new EmbedBuilder();
+
+                CommandInfo reqCmd = Program.commands.Commands.ToList().Find(e => e.Name == cmd);
+
+                if(!(await reqCmd.CheckPreconditionsAsync(Context)).IsSuccess)
+                {
+                    await ReplyAsync((await reqCmd.CheckPreconditionsAsync(Context)).ErrorReason);
+                    return;
+                }
+
+                embed.WithTitle(cmd);
+                embed.WithDescription("");
+
+                if(reqCmd.Parameters.Count > 0)
+                {
+                    foreach (ParameterInfo parameter in reqCmd.Parameters)
+                    {
+                        embed.Title += $" [{parameter.Name}{(parameter.IsOptional ? $" = {Convert.ToString(parameter.DefaultValue)}" : string.Empty)}] ";
+                    }
+                }
+
+                if(reqCmd.Aliases.Count > 0)
+                {
+                    embed.Description += "\nAliases: ";
+                    embed.Description += reqCmd.Aliases.Aggregate(embed.Description, (current, alias) => current + $"[ {alias} ]");
+                }
+
+                if(!string.IsNullOrWhiteSpace(reqCmd.Summary))
+                {
+                    embed.Description += $"\n{reqCmd.Summary}\n";
+                }
+
+                if (reqCmd.Parameters.Count > 0)
+                {
+                    embed.Description += reqCmd.Parameters.Where(parameter => !string.IsNullOrWhiteSpace(parameter.Summary)).Aggregate(embed.Description, (current, parameter) => current + $"\n{parameter.Name}: {parameter.Summary}");
+                }
+
+                await ReplyAsync(string.Empty, false, embed.Build());
+
+            }
+
+
+        }
+
         [Command("geninvite"), Summary("Get an invite to a specified server"), RequireOwner]
         public async Task GenerateInvite([Summary("GuildID to get invite for")] ulong GuildID)
         {

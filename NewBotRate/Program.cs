@@ -23,7 +23,7 @@ namespace NewBotRate
     {
         private DiscordSocketClient client;
         private IServiceProvider services;
-        private CommandService commands;
+        public static CommandService commands;
         public static readonly HttpClient httpClient = new HttpClient();
         public static string LyricsAPIKey = null;
 
