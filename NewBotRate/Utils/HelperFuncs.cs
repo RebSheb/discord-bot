@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NewBotRate.Utils
 {
@@ -14,6 +15,19 @@ namespace NewBotRate.Utils
             for (int i = 0; i < str.Length; i += maxChunkSize)
             {
                 yield return str.Substring((i < 0) ? 0 : i, Math.Min(maxChunkSize, str.Length - i));
+            }
+        }
+
+        public static async Task<byte[]> DownloadFileBytes(string url)
+        {
+            try
+            {
+                var reqRes = await NewBotRate.Program.httpClient.GetByteArrayAsync(url);
+                return reqRes;
+
+            } catch (Exception e)
+            {
+                return Encoding.ASCII.GetBytes($"Something bad happened! {e.Message}");
             }
         }
     }
