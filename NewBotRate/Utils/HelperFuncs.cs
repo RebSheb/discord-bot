@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,16 +19,30 @@ namespace NewBotRate.Utils
             }
         }
 
-        public static async Task<byte[]> DownloadFileBytes(string url)
+        public static async Task<byte[]> DownloadFileBytesAsync(string url)
         {
             try
             {
-                var reqRes = await NewBotRate.Program.httpClient.GetByteArrayAsync(url);
-                return reqRes;
+                var webRequest = HttpWebRequest.Create(url);
+                webRequest.Method = "HEAD";
+
+                using (var webResponse = await webRequest.GetResponseAsync())
+                {
+                    var fileSize = webResponse.Headers.Get("Content-Length");
+                    // is too big?
+                    if(Convert.ToInt64(fileSize) / 5000000 == 0)
+                    {
+                        // The file is ok, less than 5mb decimal
+                        var request = await Program.httpClient.GetByteArrayAsync(url);
+                        return request;
+                    }
+                }
+                return null;
+
 
             } catch (Exception e)
             {
-                return Encoding.ASCII.GetBytes($"Something bad happened! {e.Message}");
+                return null;
             }
         }
     }
