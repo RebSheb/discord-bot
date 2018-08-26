@@ -42,10 +42,10 @@ namespace NewBotRate.Modules
                 $"- Library: Discord.Net ({DiscordConfig.Version})" +
                 $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.ProcessArchitecture} " +
                 $"({RuntimeInformation.OSDescription} {RuntimeInformation.OSArchitecture})\n" +
-                $"- Uptime: {GetUpTime()}\n\n" +
+                $"- Uptime: {NewBotRate.HelperFuncs.GetUpTime()}\n\n" +
 
                 $"{Format.Bold("Stats")}\n" +
-                $"- Heap Size: {GetHeapSize()}MiB\n" +
+                $"- Heap Size: {NewBotRate.HelperFuncs.GetHeapSize()}MiB\n" +
                 $"- Guilds: {Context.Client.Guilds.Count}\n" +
                 $"- Channels: {Context.Client.Guilds.Sum(g => g.Channels.Count)}\n" +
 $"- Users: {Context.Client.Guilds.Sum(g => g.Users.Count)}\n" +
@@ -54,8 +54,5 @@ $"- Users: {Context.Client.Guilds.Sum(g => g.Users.Count)}\n" +
         }
 
 
-
-        private static string GetUpTime() => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
-        private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }

@@ -105,7 +105,7 @@ namespace NewBotRate.Modules
                 embed.WithTitle(Format.Bold(RSO.result.artist.name + " - " + RSO.result.track.name));
                 embed.WithColor(255, 140, 80);
 
-                IEnumerable<string> lyricsmsg = ChunksUpto(RSO.result.track.text, 1000);
+                IEnumerable<string> lyricsmsg = NewBotRate.HelperFuncs.ChunksUpto(RSO.result.track.text, 1000);
 
                 foreach(string ss in lyricsmsg)
                 {
@@ -270,12 +270,6 @@ namespace NewBotRate.Modules
             return;
         }
 
-        static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
-        {
-            for (int i = 0; i < str.Length; i += maxChunkSize)
-            {
-                yield return str.Substring((i < 0) ? 0 : i, Math.Min(maxChunkSize, str.Length - i));
-            }
-        }
+        
     }
 }

@@ -70,7 +70,7 @@ namespace NewBotRate
                 botOptions = (BotOptions)serializer.Deserialize(fs, typeof(BotOptions));
             }
             this.prefix = botOptions.CmdPrefix;
-            Program.LyricsAPIKey = botOptions.LyricAPIKey;
+            NewBotRate.Program.LyricsAPIKey = botOptions.LyricAPIKey;
 
             // Do all the bot set up in here.
             client = new DiscordSocketClient(new DiscordSocketConfig
