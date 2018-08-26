@@ -16,7 +16,7 @@ namespace NewBotRate.Modules
         [Command("volumeup"), Summary("Earrape a file")]
         public async Task IncreaseVolume([Summary("The amount to boost the volume by")] float increase)
         {
-
+            await ReplyAsync("Not implemented yet..");
 
             return;
         }
