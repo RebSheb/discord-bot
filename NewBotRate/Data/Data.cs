@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using NewBotRate.Database;
 
+#pragma warning disable 1998
+
 namespace NewBotRate.Data
 {
     public static class Data
