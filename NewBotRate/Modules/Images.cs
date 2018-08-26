@@ -10,6 +10,7 @@ using Discord;
 using Discord.Commands;
 using ImageProcessor;
 using ImageProcessor.Imaging.Formats;
+using ImageProcessor.Imaging.Filters.EdgeDetection;
 
 namespace NewBotRate.Modules
 {
@@ -196,6 +197,82 @@ namespace NewBotRate.Modules
             }
             await ReplyAsync("Something went wrong with image downloading...");
             return;
+        }
+
+        [Command("detectedges"), Alias("detecte"), Summary("Detect edges in an image using various filters")]
+        public async Task ApplyFilter([Summary("URL to filter")] string URL,
+            [Summary("Filter to apply in integer 0-8")] int filter = 0,
+            [Summary("Apply greyscale or not, true or false")] bool greyscale = false)
+        {
+            await ReplyAsync("Processing... This might take some time.");
+
+            if(filter > 8 || filter < 0)
+            {
+                await ReplyAsync("You need to enter a number between 0 and 8 for this command...");
+                return;
+            }
+
+            IEdgeFilter imgFilter = null;
+            switch (filter)
+            {
+                case 0:
+                    imgFilter = new KayyaliEdgeFilter();
+                    break;
+
+                case 1:
+                    imgFilter = new KirschEdgeFilter();
+                    break;
+
+                case 2:
+                    imgFilter = new Laplacian3X3EdgeFilter();
+                    break;
+
+                case 3:
+                    imgFilter = new Laplacian5X5EdgeFilter();
+                    break;
+
+                case 4:
+                    imgFilter = new LaplacianOfGaussianEdgeFilter();
+                    break;
+
+                case 5:
+                    imgFilter = new PrewittEdgeFilter();
+                    break;
+
+                case 6:
+                    imgFilter = new RobertsCrossEdgeFilter();
+                    break;
+
+                case 7:
+                    imgFilter = new ScharrEdgeFilter();
+                    break;
+
+                case 8:
+                    imgFilter = new SobelEdgeFilter();
+                    break;
+
+                default:
+                    imgFilter = new KayyaliEdgeFilter();
+                    break;
+            }
+
+            MemoryStream imgStream = new MemoryStream(await NewBotRate.Utils.HelperFuncs.DownloadFileBytesAsync(URL));
+
+            if(imgStream != null)
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    NewBotRate.Utils.HelperFuncs.GetImageFactory(imgStream)
+                        .DetectEdges(imgFilter, greyscale)
+                        .Save(outStream);
+
+                    await Context.Channel.SendFileAsync(outStream, "edgedetect.jpg", $"Using filter {imgFilter.ToString()}");
+                    return;
+                }
+            }
+            await ReplyAsync("Something went wrong downloading the image... Bad URL perhaps?");
+            return;
+            
         }
     }
 }
