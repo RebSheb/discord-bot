@@ -40,7 +40,7 @@ namespace NewBotRate.Utils
                 return null;
 
 
-            } catch (Exception e)
+            } catch (Exception)//e)
             {
                 return null;
             }
