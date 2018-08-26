@@ -42,10 +42,10 @@ namespace NewBotRate.Modules
                 $"- Library: Discord.Net ({DiscordConfig.Version})" +
                 $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.ProcessArchitecture} " +
                 $"({RuntimeInformation.OSDescription} {RuntimeInformation.OSArchitecture})\n" +
-                $"- Uptime: {NewBotRate.HelperFuncs.GetUpTime()}\n\n" +
+                $"- Uptime: {NewBotRate.Utils.HelperFuncs.GetUpTime()}\n\n" +
 
                 $"{Format.Bold("Stats")}\n" +
-                $"- Heap Size: {NewBotRate.HelperFuncs.GetHeapSize()}MiB\n" +
+                $"- Heap Size: {NewBotRate.Utils.HelperFuncs.GetHeapSize()}MiB\n" +
                 $"- Guilds: {Context.Client.Guilds.Count}\n" +
                 $"- Channels: {Context.Client.Guilds.Sum(g => g.Channels.Count)}\n" +
 $"- Users: {Context.Client.Guilds.Sum(g => g.Users.Count)}\n" +

@@ -105,7 +105,7 @@ namespace NewBotRate.Modules
                 embed.WithTitle(Format.Bold(RSO.result.artist.name + " - " + RSO.result.track.name));
                 embed.WithColor(255, 140, 80);
 
-                IEnumerable<string> lyricsmsg = NewBotRate.HelperFuncs.ChunksUpto(RSO.result.track.text, 1000);
+                IEnumerable<string> lyricsmsg = NewBotRate.Utils.HelperFuncs.ChunksUpto(RSO.result.track.text, 1000);
 
                 foreach(string ss in lyricsmsg)
                 {
