@@ -300,6 +300,13 @@ namespace NewBotRate.Modules
             return;
         }
 
+        [Command("watermark"), Alias("wm")]
+        public async Task Watermark([Summary("URL to Watermark")] string URL,
+            [Summary("Text to add to it"), Remainder] string wmText)
+        {
+
+        }
+
         [Command("watermark"), Alias("wm"), Summary("Add a watermark to an image")]
         public async Task Watermark([Summary("URL to Watermark")] string URL,
             [Summary("RGB values separated by space")] int r, int g, int b,
