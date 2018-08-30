@@ -26,6 +26,7 @@ namespace NewBotRate
         public static CommandService commands;
         public static readonly HttpClient httpClient = new HttpClient();
         public static string LyricsAPIKey = null;
+        public static Random RND = new Random();
 
         private string prefix = "$";
 

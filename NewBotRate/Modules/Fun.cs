@@ -64,12 +64,14 @@ namespace NewBotRate.Modules
 
     public class Fun : ModuleBase<SocketCommandContext>
     {
+        public static readonly List<string> vowels = new List<string> { "a", "e", "i", "o", "u", "A", "E", "I", "O", "U" };
+
+
         [Command("say"), Alias("echo", "repeat"), Summary("Echos a message")]
         public async Task Say([Remainder, Summary("Text to echo")] string echo)
         {
             await ReplyAsync(echo);
         }
-
 
         [Command("mc"), Alias("achget"), Summary("Generate elite MC achievement")]
         public async Task MCAchievment([Remainder, Summary("Text of achievment")] string text)
@@ -79,7 +81,6 @@ namespace NewBotRate.Modules
                 await Context.Channel.SendFileAsync(response, "achievement.png");
             }
         }
-
 
         [Command("lyrics"), Alias("getwords"), Summary("Gets lyrics of a song...")]
         public async Task LyricsGet([Summary("The artist name <REQUIRED>")] string artistName = "logic",
@@ -120,8 +121,6 @@ namespace NewBotRate.Modules
                 return;
             }
         }
-
-
 
         [Command("emojify"), Alias("inducecancer"), Summary("Turns text into emojis...")]
         public async Task Emojify([Summary("Text to turn to emoji"), Remainder] string text)
@@ -268,6 +267,69 @@ namespace NewBotRate.Modules
             }
             await ReplyAsync(emojiText);
             return;
+        }
+
+        [Command("reversestring"), Alias("strrev", "rev"), Summary("Reverse a string")]
+        public async Task ReverseString([Summary("String to reverse"), Remainder] string text)
+        {
+            try
+            {
+                string output = string.Empty;
+                for(int index = text.Length; index > 0; index--)
+                {
+                    output += text[index-1];
+                }
+
+                await ReplyAsync(output);
+                return;
+            } catch(IndexOutOfRangeException e)
+            {
+                await ReplyAsync(e.Message);
+                return;
+            }
+
+        }
+
+        [Command("piglatin"), Alias("pygl"), Summary("Perform pig latin.")]
+        public async Task PigLatinString([Summary("String to piglatin"), Remainder] string text)
+        {
+            string output = string.Empty;
+            string[] wordAppendChoide = new string[] { "way", "yay" };
+
+            var strArray = text.Split(" ");
+
+            foreach(string word in strArray)
+            {
+                if ((!vowels.Contains(word[0].ToString())) && (vowels.Contains(word[1].ToString()))) // Begins with a consonant, second letter is a vowel
+                {
+                    string modWord = word;
+                    // Move 1st[0] to end and append "ay"
+                    modWord += modWord[0] + "ay";
+                    modWord.Remove(0);
+                    output += modWord;
+                }
+                else if((!vowels.Contains(word[0].ToString())) && !(vowels.Contains(word[1].ToString()))) // Begins with two consonants
+                {
+                    // Move 1st two characters [0] & [1] to the end and append "ay"
+                    string modWord = word;
+                    modWord += modWord[0].ToString() + modWord[1].ToString();
+                    modWord = modWord.Remove(0, 1).Remove(0, 1);
+                    output += modWord;
+                }
+                else if (vowels.Contains(word[0].ToString())) // Starts with a vowel
+                {
+
+                    // Add either way or ay on end. RandomChoice it.
+                    output += ((Program.RND.Next(0, 1) == 1) ? word + wordAppendChoide[0] : word + wordAppendChoide[1]);
+                }
+            }
+            if (output.Length > 2000)
+            {
+                await ReplyAsync("String too long to post :(");
+                return;
+            }
+
+            await ReplyAsync(output);
         }
 
         

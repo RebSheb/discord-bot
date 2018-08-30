@@ -177,16 +177,15 @@ namespace NewBotRate.Modules
 
             if(imgStream != null)
             {
-                Random rnd = new Random();
                 using (MemoryStream outStream = new MemoryStream())
                 {
                     ImageFactory imgFac = NewBotRate.Utils.HelperFuncs.GetImageFactory(imgStream);
 
                     for(int i = 0; i <= iters; i++)
                     {
-                        imgFac.Saturation(rnd.Next(0, 50))
-                            .Quality(rnd.Next(0, 50))
-                            .Pixelate(rnd.Next(0, 2));
+                        imgFac.Saturation(Program.RND.Next(0, 50))
+                            .Quality(Program.RND.Next(0, 50))
+                            .Pixelate(Program.RND.Next(0, 2));
                     }
                     imgFac.Save(outStream);
 
