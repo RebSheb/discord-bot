@@ -274,5 +274,64 @@ namespace NewBotRate.Modules
             return;
             
         }
+
+        [Command("rotate"), Alias("rot"), Summary("Rotate an image clockwise (positive), counter (negative) degrees")]
+        public async Task RotateImg([Summary("URL to rotate")] string URL,
+            [Summary("Degrees to rotate by (int)")] int degrees)
+        {
+            await ReplyAsync("Processing... This might take some time.");
+
+            MemoryStream memoryStream = new MemoryStream(await NewBotRate.Utils.HelperFuncs.DownloadFileBytesAsync(URL));
+
+            if(memoryStream != null)
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    NewBotRate.Utils.HelperFuncs.GetImageFactory(memoryStream)
+                        .Rotate(degrees)
+                        .Save(outStream);
+
+                    await Context.Channel.SendFileAsync(outStream, $"rotate{degrees.ToString()}.jpg");
+                    return;
+                }
+            }
+
+            await ReplyAsync("Something went wrong.. Bad URL perhaps?");
+            return;
+        }
+
+        [Command("watermark"), Alias("wm"), Summary("Add a watermark to an image")]
+        public async Task Watermark([Summary("URL to Watermark")] string URL,
+            [Summary("RGB values separated by space")] int r, int g, int b,
+            [Summary("Text to watermark it"), Remainder] string wmText)
+        {
+            await ReplyAsync("Processing... This might take some time.");
+
+            MemoryStream imgStream = new MemoryStream(await NewBotRate.Utils.HelperFuncs.DownloadFileBytesAsync(URL));
+         
+
+            if(imgStream != null)
+            {
+                using (MemoryStream outStream = new MemoryStream())
+                {
+                    NewBotRate.Utils.HelperFuncs.GetImageFactory(imgStream)
+                        .Watermark(new ImageProcessor.Imaging.TextLayer
+                        {
+                            Text = wmText,
+                            FontColor = System.Drawing.Color.FromArgb(r, g, b),
+                            FontSize = 64,
+                            DropShadow = false,
+                        })
+                        .Save(outStream);
+
+                    await Context.Channel.SendFileAsync(outStream, "watermarked.jpg");
+                    return;
+                }
+            }
+            await ReplyAsync("Something bad happened. Bad URL perhaps?");
+            return;
+        }
+
+
     }
 }
