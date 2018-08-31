@@ -42,13 +42,13 @@ namespace NewBotRate.Modules
                 await ReplyAsync(string.Empty, false, embed: embed.Build());
             }
 
-            else if(Program.commands.Commands.ToList().Find(e => e.Name == cmd) != null)
+            else if (Program.commands.Commands.ToList().Find(e => e.Name == cmd) != null)
             {
                 EmbedBuilder embed = new EmbedBuilder();
 
                 CommandInfo reqCmd = Program.commands.Commands.ToList().Find(e => e.Name == cmd);
 
-                if(!(await reqCmd.CheckPreconditionsAsync(Context)).IsSuccess)
+                if (!(await reqCmd.CheckPreconditionsAsync(Context)).IsSuccess)
                 {
                     await ReplyAsync((await reqCmd.CheckPreconditionsAsync(Context)).ErrorReason);
                     return;
@@ -57,7 +57,7 @@ namespace NewBotRate.Modules
                 embed.WithTitle(cmd);
                 embed.WithDescription("");
 
-                if(reqCmd.Parameters.Count > 0)
+                if (reqCmd.Parameters.Count > 0)
                 {
                     foreach (ParameterInfo parameter in reqCmd.Parameters)
                     {
@@ -65,13 +65,13 @@ namespace NewBotRate.Modules
                     }
                 }
 
-                if(reqCmd.Aliases.Count > 0)
+                if (reqCmd.Aliases.Count > 0)
                 {
                     embed.Description += "\nAliases: ";
                     embed.Description += reqCmd.Aliases.Aggregate(embed.Description, (current, alias) => current + $"[ {alias} ]");
                 }
 
-                if(!string.IsNullOrWhiteSpace(reqCmd.Summary))
+                if (!string.IsNullOrWhiteSpace(reqCmd.Summary))
                 {
                     embed.Description += $"\n{reqCmd.Summary}\n";
                 }
@@ -92,7 +92,7 @@ namespace NewBotRate.Modules
         public async Task GenerateInvite([Summary("GuildID to get invite for")] ulong GuildID)
         {
             await ReplyAsync($"Generating invite for {GuildID}\n");
-            if(Context.Client.Guilds.Where(x => x.Id == GuildID).Count() < 1)
+            if (Context.Client.Guilds.Where(x => x.Id == GuildID).Count() < 1)
             {
                 await ReplyAsync($":x: I am not in this guild ({GuildID})");
                 return;
@@ -101,7 +101,7 @@ namespace NewBotRate.Modules
             try
             {
                 var invites = await Guild.GetInvitesAsync();
-                if(invites.Count() < 1)
+                if (invites.Count() < 1)
                 {
                     await Guild.TextChannels.First().CreateInviteAsync();
                 }
@@ -110,7 +110,7 @@ namespace NewBotRate.Modules
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.WithAuthor($"Invites for Guild {Guild.Name}:", Guild.IconUrl);
                 embed.WithColor(40, 200, 150);
-                foreach(var Current in invites)
+                foreach (var Current in invites)
                 {
                     embed.AddInlineField("Invite:", $"{Current.Url}");
                 }
@@ -127,9 +127,9 @@ namespace NewBotRate.Modules
         {
             string guildsMsg = "";
 
-            foreach(IGuild iGuild in Context.Client.Guilds)
+            foreach (IGuild iGuild in Context.Client.Guilds)
             {
-                if((guildsMsg + iGuild.Name + ":" + iGuild.Id).Length > 2000)
+                if ((guildsMsg + iGuild.Name + ":" + iGuild.Id).Length > 2000)
                 {
                     await ReplyAsync(guildsMsg);
                     guildsMsg = "";
@@ -143,7 +143,7 @@ namespace NewBotRate.Modules
         [Command("complain"), Alias("feedback"), Summary("Give feedback to Rob about bot")]
         public async Task Feedback([Remainder] string Message)
         {
-            if(Context.User.IsBot)
+            if (Context.User.IsBot)
             {
                 await ReplyAsync(":x: Bot's cannot leave feedback...");
                 return;
@@ -160,16 +160,16 @@ namespace NewBotRate.Modules
         {
             List<Database.Feedback> fdbacks = null;
             fdbacks = Data.Data.GetFeedbacks(MaxGet, IsRead);
-            if(fdbacks == null)
+            if (fdbacks == null)
             {
                 await ReplyAsync("No feedbacks to look at...");
                 return;
             }
 
             string msg = "";
-            foreach(Database.Feedback fback in fdbacks)
+            foreach (Database.Feedback fback in fdbacks)
             {
-                if ((msg + fback.FeedbackID + ": "+ fback.GuildID + "-" + "<@" + fback.UserID + ">" + ": " + fback.Message + "\n").Length > 2000)
+                if ((msg + fback.FeedbackID + ": " + fback.GuildID + "-" + "<@" + fback.UserID + ">" + ": " + fback.Message + "\n").Length > 2000)
                 {
                     await ReplyAsync(msg);
                 }
@@ -181,7 +181,7 @@ namespace NewBotRate.Modules
         [Command("deletefeedback"), Alias("dfb", "delfb", "deletefeedback"), Summary("Deletes feedback from database"), RequireOwner]
         public async Task DeleteFeedback(int FBackID)
         {
-            if(FBackID < 0)
+            if (FBackID < 0)
             {
                 await ReplyAsync("The value entered must be bigger than 0...");
                 return;
@@ -204,7 +204,7 @@ namespace NewBotRate.Modules
         [Command("setreadfeedback"), Alias("sfb"), Summary("Set a feedback as read"), RequireOwner]
         public async Task SetFeedbackRead(int FBackID, bool readVal)
         {
-            if(FBackID < 0)
+            if (FBackID < 0)
             {
                 await ReplyAsync("The value entered must be bigger than 0...");
                 return;
@@ -214,6 +214,38 @@ namespace NewBotRate.Modules
             await ReplyAsync($"Successfully modified {FBackID}");
             return;
         }
+
+        [Command("additiveinverse"), Alias("addinv"), Summary("Perform additive inverse on a list of numbers, space delimited")]
+        public async Task AdditiveInverse([Summary("Ints to do magic on"), Remainder] string integers)
+        {
+            string modString = integers;
+
+            string replyString = string.Empty;
+
+            foreach(string value in modString.Split(' '))
+            {
+                int currentInt = 0;
+                if(!int.TryParse(value, out currentInt))
+                {
+                    replyString += value + " ";
+                    continue;
+                }
+
+                if (currentInt > 0)
+                    replyString += (-currentInt).ToString() + " ";
+                else if (currentInt <= 0)
+                    replyString += Math.Abs(currentInt).ToString() + " ";
+                else
+                    replyString += "What? ";
+            }
+
+            await ReplyAsync(replyString);
+            return;
+        }
+
+        [Command("exponent"), Alias("pow"), Summary("Find the exponent of two numbers")]
+        public async Task Exponent([Summary("Integer base")] int number,
+            [Summary("Number to exponent by")] int pow) => await ReplyAsync($"{Math.Pow(number, pow)}");
 
     }
 }
