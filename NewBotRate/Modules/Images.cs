@@ -17,9 +17,10 @@ namespace NewBotRate.Modules
     public class Images : ModuleBase<SocketCommandContext>
     {
         [Command("resize"), Alias("rz"), Summary("Resize a image")]
-        public async Task ResizeImage([Summary("The Y/Width to rezize to")] int YVal,
-            [Summary("The X/Height to resize to")] int XVal,
-            [Summary("URL of the image to resize")] string URL)
+        public async Task ResizeImage([Summary("URL of the image to resize")] string URL,
+            [Summary("The Y/Width to rezize to")] int YVal,
+            [Summary("The X/Height to resize to")] int XVal)
+            
         {
             await ReplyAsync("Processing... This might take some time.");
             Size imgSize = new Size(YVal, XVal);
@@ -30,7 +31,7 @@ namespace NewBotRate.Modules
                 {
 
                     NewBotRate.Utils.HelperFuncs.GetImageFactory(imgStream)
-                        .Resize(imgSize)
+                        .Resize(new ImageProcessor.Imaging.ResizeLayer(imgSize, ImageProcessor.Imaging.ResizeMode.Stretch))
                         .Format(new JpegFormat { Quality = 100 })
                         .Save(outStream);
 
