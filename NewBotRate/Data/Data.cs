@@ -135,6 +135,35 @@ namespace NewBotRate.Data
                 return $"Tag {TagName} doesn't exist!";
             }
         }
+
+        public static async Task<string> UpdateTag(ulong GID, ulong UID, string TagName, string newMsg)
+        {
+            using (var DbContext = new SqliteDbContext())
+            {
+                if(DbContext.Tags.Where(x=> x.GuildID == GID && x.UserID == UID && x.TagName == TagName).Count() >= 1)
+                {
+                    Tag CurTag = DbContext.Tags.Where(x => x.GuildID == GID && x.UserID == UID && x.TagName == TagName).FirstOrDefault();
+                    CurTag.TagMsg += "\n" + newMsg;
+                    DbContext.Tags.Update(CurTag);
+                }
+                await DbContext.SaveChangesAsync();
+            }
+
+            return $"Tag {TagName} updated!";
+        }
+
+        public static async Task<string> GetTag(ulong GID, string tagName)
+        {
+            using (var DbContext = new SqliteDbContext())
+            {
+                if(DbContext.Tags.Where(x => x.GuildID == GID && x.TagName == tagName).Count() >= 1)
+                {
+                    return DbContext.Tags.Where(x => x.GuildID == GID && x.TagName == tagName).FirstOrDefault().TagMsg;
+                }
+
+                return $"Tag name {tagName} doesn't exist :(";
+            }
+        }
         #endregion
 
 

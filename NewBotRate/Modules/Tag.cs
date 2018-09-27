@@ -48,5 +48,18 @@ namespace NewBotRate.Modules
 
         [Command("delete"), Alias("del", "d"), Summary("Delete a tag you own")]
         public async Task DeleteTag([Summary("The name of the tag to delete")] string tagName) => await ReplyAsync(await Data.Data.DeleteTag(Context.Guild.Id, Context.User.Id, tagName));
+
+
+        [Command("update"), Alias("u"), Summary("Update a tag you own")]
+        public async Task UpdateTag([Summary("The name of the tag you want to update")] string tagName, [Summary("Additional text to add.."), Remainder] string updateMsg)
+        {
+            await ReplyAsync(await Data.Data.UpdateTag(Context.Guild.Id, Context.User.Id, tagName, updateMsg));
+        }
+
+        [Command("")]
+        public async Task GetTag([Summary("Name of tag to get")] string tagName)
+        {
+            await ReplyAsync(await Data.Data.GetTag(Context.Guild.Id, tagName));
+        }
     }
 }
