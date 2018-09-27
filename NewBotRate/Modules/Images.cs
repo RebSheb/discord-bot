@@ -304,7 +304,7 @@ namespace NewBotRate.Modules
         public async Task Watermark([Summary("URL to Watermark")] string URL,
             [Summary("Text to add to it"), Remainder] string wmText)
         {
-
+            await ReplyAsync("WIP");
         }
 
         [Command("watermark"), Alias("wm"), Summary("Add a watermark to an image")]
@@ -338,7 +338,6 @@ namespace NewBotRate.Modules
             await ReplyAsync("Something bad happened. Bad URL perhaps?");
             return;
         }
-
 
     }
 }
