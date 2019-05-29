@@ -122,7 +122,7 @@ namespace NewBotRate.Modules
             }
         }
 
-        [Command("emojify"), Alias("inducecancer"), Summary("Turns text into emojis...")]
+        [Command("emojify"), Alias("emoji"), Summary("Turns text into emojis...")]
         public async Task Emojify([Summary("Text to turn to emoji"), Remainder] string text)
         {
             await Context.Message.DeleteAsync();
